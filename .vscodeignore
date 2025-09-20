@@ -1,0 +1,8 @@
+.vscode-test/**
+src/**
+.gitignore
+tsconfig.json
+.vscode/
+node_modules/@types/**
+*.vsix
+PRD.md
