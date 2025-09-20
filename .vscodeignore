@@ -1,8 +1,49 @@
+# VS Code test files
 .vscode-test/**
+.vscode/**
+
+# Source TypeScript files (we only need compiled JS)
 src/**
-.gitignore
 tsconfig.json
-.vscode/
-node_modules/@types/**
-*.vsix
+
+# Git files
+.gitignore
+.git/**
+
+# Documentation and project files
 PRD.md
+README.md
+readme.md
+CHANGELOG.md
+docs/**
+
+# Development files
+*.vsix
+test-repo/**
+
+# Node modules - exclude documentation and type files
+node_modules/@types/**
+node_modules/**/*.md
+node_modules/**/*.txt
+node_modules/**/LICENSE*
+node_modules/**/CHANGELOG*
+node_modules/**/README*
+node_modules/**/HISTORY*
+node_modules/**/*.map
+node_modules/**/*.d.ts
+
+# Test files
+test/**
+tests/**
+**/*.test.*
+**/*.spec.*
+
+# Development tools
+.eslintrc*
+.prettierrc*
+webpack.config.js
+
+# Logs and temp files
+*.log
+.DS_Store
+coverage/

@@ -24,21 +24,45 @@ export class ApiKeyManager {
         // Let user choose Gemini model
         const model = await vscode.window.showQuickPick([
             {
+                label: 'gemini-2.5-pro',
+                description: 'Latest and most capable Gemini model (recommended)',
+                detail: 'Best performance for complex code analysis',
+                value: 'gemini-2.5-pro'
+            },
+            {
+                label: 'gemini-2.5-flash',
+                description: 'Latest fast model with excellent capabilities',
+                detail: 'Great balance of speed and advanced features',
+                value: 'gemini-2.5-flash'
+            },
+            {
+                label: 'gemini-2.0-flash-exp',
+                description: 'Experimental 2.0 model with cutting-edge features',
+                detail: 'Experimental features, may have usage limits',
+                value: 'gemini-2.0-flash-exp'
+            },
+            {
                 label: 'gemini-1.5-pro',
-                description: 'Most capable Gemini model (recommended)',
-                detail: 'Best for complex code analysis',
+                description: 'Proven capable Gemini model',
+                detail: 'Reliable choice for complex code analysis',
                 value: 'gemini-1.5-pro'
             },
             {
                 label: 'gemini-1.5-flash',
-                description: 'Faster and more economical',
+                description: 'Fast and economical',
                 detail: 'Good balance of speed and quality',
                 value: 'gemini-1.5-flash'
             },
             {
+                label: 'gemini-1.5-flash-8b',
+                description: 'Compact and efficient model',
+                detail: 'Fastest option with reduced capabilities',
+                value: 'gemini-1.5-flash-8b'
+            },
+            {
                 label: 'gemini-pro',
                 description: 'Original Gemini Pro model',
-                detail: 'Legacy model, use newer versions if possible',
+                detail: 'Legacy model, consider newer versions',
                 value: 'gemini-pro'
             }
         ], {

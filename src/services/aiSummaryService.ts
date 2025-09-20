@@ -14,9 +14,35 @@ export class AiSummaryService {
         const config = vscode.workspace.getConfiguration('codex');
         const model = config.get<string>('geminiModel', 'gemini-1.5-pro');
         
+        // Validate model availability
+        this.validateModel(model);
+        
         const context = await this.buildContextString(analysisResult, selectedCode, filePath, startLine, endLine);
         
         return this.generateGeminiSummary(context, apiKey, model);
+    }
+
+    private getMaxTokensForModel(model: string): number {
+        // Newer models like 2.5-flash use more tokens for reasoning/thinking
+        // so they need higher limits to produce actual output
+        switch (model) {
+            case 'gemini-2.5-pro':
+            case 'gemini-2.5-flash':
+                return 1000; // Higher limit for 2.5 models that use reasoning tokens
+            case 'gemini-2.0-flash-exp':
+                return 800; // Medium-high limit for experimental 2.0 model
+            default:
+                return 400; // Original limit for stable 1.x models
+        }
+    }
+
+    private validateModel(model: string): void {
+        // Warn about experimental or newer models that might not be available
+        const experimentalModels = ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.0-flash-exp'];
+        
+        if (experimentalModels.includes(model)) {
+            // Silent validation - just note that it's experimental
+        }
     }
 
     private async buildContextString(
@@ -104,7 +130,7 @@ export class AiSummaryService {
                         }]
                     }],
                     generationConfig: {
-                        maxOutputTokens: 400, // Reduced for more concise responses
+                        maxOutputTokens: this.getMaxTokensForModel(model),
                         temperature: 0.2, // Lower temperature for more focused responses
                         topP: 0.8,
                         topK: 20 // Reduced for more deterministic output
@@ -118,9 +144,29 @@ export class AiSummaryService {
                 }
             );
             
-            const generatedText = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+            // Check finish reason first
+            const finishReason = response.data.candidates?.[0]?.finishReason;
+            
+            // Try different response structure paths for different models
+            let generatedText = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+            
+            // Fallback for different response structures
             if (!generatedText) {
-                throw new Error('No response generated from Gemini API');
+                generatedText = response.data.candidates?.[0]?.output;
+                if (!generatedText) {
+                    generatedText = response.data.text;
+                }
+                if (!generatedText) {
+                    generatedText = response.data.content?.parts?.[0]?.text;
+                }
+            }
+            
+            if (!generatedText) {
+                if (finishReason === 'MAX_TOKENS') {
+                    throw new Error(`Model ${model} hit the token limit before completing the response. The model may be using too many tokens for internal reasoning. Try switching to a stable model like gemini-1.5-pro.`);
+                }
+                
+                throw new Error(`No response generated from Gemini API for model ${model}. Try switching to a different model.`);
             }
             
             return generatedText;
@@ -129,15 +175,20 @@ export class AiSummaryService {
                 if (error.response?.status === 400) {
                     const errorMsg = error.response?.data?.error?.message || 'Invalid request';
                     if (errorMsg.includes('API key')) {
-                        throw new Error('Invalid Gemini API key. Please check your configuration.');
+                        throw new Error(`Invalid Gemini API key for model ${model}. Please check your configuration.`);
                     }
-                    throw new Error(`Gemini API error: ${errorMsg}`);
+                    if (errorMsg.includes('model')) {
+                        throw new Error(`Model ${model} may not be available or supported. Try switching to a different model in settings.`);
+                    }
+                    throw new Error(`Gemini API error for model ${model}: ${errorMsg}`);
+                } else if (error.response?.status === 404) {
+                    throw new Error(`Model ${model} not found. This model may not be available yet or in your region. Please try a different model.`);
                 } else if (error.response?.status === 429) {
-                    throw new Error('Gemini API rate limit exceeded. Please try again later.');
+                    throw new Error(`Gemini API rate limit exceeded for model ${model}. Please try again later.`);
                 } else if (error.response?.status === 403) {
-                    throw new Error('Gemini API access denied. Please check your API key permissions.');
+                    throw new Error(`Gemini API access denied for model ${model}. Please check your API key permissions.`);
                 } else {
-                    throw new Error(`Gemini API error (${error.response?.status}): ${error.response?.data?.error?.message || error.message}`);
+                    throw new Error(`Gemini API error for model ${model} (${error.response?.status}): ${error.response?.data?.error?.message || error.message}`);
                 }
             }
             throw error;

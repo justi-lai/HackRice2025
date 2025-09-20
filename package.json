@@ -4,6 +4,10 @@
   "description": "Automates code archeology by analyzing git history, GitHub PRs, and generating AI-powered summaries of code intent",
   "version": "1.0.0",
   "publisher": "hackrice-team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/justi-lai/HackRice2025.git"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
