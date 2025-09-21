@@ -1,6 +1,6 @@
-# Codex: The Code Archaeology Assistant
+# CodeScribe: The Code Archaeology Assistant
 
-**Codex** is a VS Code extension that transforms code investigation from a time-consuming manual process into a single, seamless action. By highlighting any block of code, developers can instantly receive a rich, AI-powered narrative history that explains the "why" behind the code using advanced evolution-based git analysis.
+**CodeScribe** is a VS Code extension that transforms code investigation from a time-consuming manual process into a single, seamless action. By highlighting any block of code, developers can instantly receive a rich, AI-powered narrative history that explains the "why" behind the code using advanced evolution-based git analysis.
 
 ## ✨ Key Features
 
@@ -28,8 +28,8 @@
 ## � How It Works
 
 1. **Select Code**: Highlight any block of code in a Git repository
-2. **Right-Click**: Choose "Codex: Analyze Selection" from the context menu
-3. **Evolution Tracking**: Codex uses `git blame` to identify which commits modified those exact lines
+2. **Right-Click**: Choose "CodeScribe: Analyze Selection" from the context menu
+3. **Evolution Tracking**: CodeScribe uses `git blame` to identify which commits modified those exact lines
 4. **Smart Diff Extraction**: For each commit, extracts only the diff hunks that intersected with your selection
 5. **AI Analysis**: Feeds commit messages, surrounding code context, and PR information to Gemini AI
 6. **Confident Results**: Get definitive explanations of why the code exists and how it evolved
@@ -59,7 +59,7 @@
 ## 🛠️ Installation
 
 ### From VS Code Marketplace (Coming Soon)
-1. Search for "Codex" in VS Code Extensions
+1. Search for "CodeScribe" in VS Code Extensions
 2. Click Install
 
 ### From VSIX File
@@ -71,11 +71,11 @@
 ## ⚙️ Setup
 
 1. **Configure API Key**:
-   - Command Palette → "Codex: Configure API Key"
+   - Command Palette → "CodeScribe: Configure API Key"
    - Enter your Google AI Studio API key
    - Choose preferred model (recommended: `gemini-1.5-pro` for stability, `gemini-2.5-pro` for latest quality, or `gemini-2.5-flash` for speed)
 
-2. **Verify Setup**: Codex automatically checks dependencies on first use
+2. **Verify Setup**: CodeScribe automatically checks dependencies on first use
 
 ## 🎯 Usage Examples
 
@@ -99,7 +99,7 @@ function debounceWithImmediate(func, wait, immediate) {
 }
 ```
 
-**Codex Analysis Result:**
+**CodeScribe Analysis Result:**
 > **WHY THIS CODE EXISTS:**
 > This debounce implementation handles both trailing and leading edge execution patterns to solve performance issues with rapid user input events. The immediate flag was added after issue #156 revealed that search autocomplete needed instant feedback on the first keystroke.
 
@@ -114,11 +114,11 @@ def expensive_calculation(x, y, matrix_size=1000):
     return heavy_matrix_operation(x, y, matrix_size)
 ```
 
-**Codex Analysis:**
+**CodeScribe Analysis:**
 > **WHY THIS CODE EXISTS:**
 > This caching decorator was added to solve a critical performance bottleneck where the same calculations were being repeated hundreds of times per user session. Profiling data in PR #89 showed this function consumed 40% of CPU time before optimization.
 
-## 🎨 What Makes Codex Different
+## 🎨 What Makes CodeScribe Different
 
 ### Traditional Approach ❌
 - Manually dig through `git log` and `git blame`
@@ -127,7 +127,7 @@ def expensive_calculation(x, y, matrix_size=1000):
 - Guess at the reasoning behind changes
 - Spend 15-30 minutes per investigation
 
-### Codex Approach ✅
+### CodeScribe Approach ✅
 - Select code → right-click → instant analysis
 - Evolution-based tracking finds exact relevant commits
 - AI confidently explains purpose based on rich context
@@ -137,7 +137,7 @@ def expensive_calculation(x, y, matrix_size=1000):
 ## 🔧 Advanced Features
 
 ### Evolution-Based Tracking
-Unlike tools that rely on text matching, Codex uses git's internal line tracking to:
+Unlike tools that rely on text matching, CodeScribe uses git's internal line tracking to:
 - Handle file renames and moves seamlessly
 - Track lines through refactoring and reformatting
 - Find relevant changes even when code has been heavily modified
@@ -151,7 +151,7 @@ The AI analyzes:
 - **Related issues** linked to PRs for full background
 
 ### Intelligent Diff Filtering
-Instead of showing entire commit diffs, Codex:
+Instead of showing entire commit diffs, CodeScribe:
 - Extracts only hunks that intersected with your selected lines
 - Uses mathematical line range analysis for precision
 - Handles complex git history with multiple file paths
@@ -163,18 +163,18 @@ Instead of showing entire commit diffs, Codex:
 
 **Easy Method**: Use VS Code Settings
 1. Open `File > Preferences > Settings` (or `Ctrl+,`)
-2. Search for "Codex"
-3. Change the `Codex: Gemini Model` dropdown
+2. Search for "CodeScribe"
+3. Change the `CodeScribe: Gemini Model` dropdown
 4. Your API key remains saved - no need to re-enter!
 
 **Alternative**: Use Settings JSON
 1. Open Command Palette (`Ctrl+Shift+P`)
 2. Run "Preferences: Open Settings (JSON)"
-3. Add: `"codex.geminiModel": "gemini-2.5-pro"`
+3. Add: `"codescribe.geminiModel": "gemini-2.5-pro"`
 
 ### Available Models
 
-- **`codex.geminiModel`**: 
+- **`codescribe.geminiModel`**: 
   - `gemini-2.5-pro` - Latest production model with highest quality
   - `gemini-2.5-flash` - Latest fast model with excellent performance
   - `gemini-2.0-flash-exp` - Experimental model with enhanced capabilities
@@ -200,7 +200,7 @@ Instead of showing entire commit diffs, Codex:
 - Initialize with `git init` if needed
 
 **"API key invalid"**
-- Reconfigure API key: Command Palette → "Codex: Configure API Key"
+- Reconfigure API key: Command Palette → "CodeScribe: Configure API Key"
 - Verify key starts with "AIza" (Google AI Studio key)
 - Check API quota and billing status
 
@@ -211,7 +211,7 @@ Instead of showing entire commit diffs, Codex:
 
 ### Debug Information
 - Open VS Code Developer Console (F12) for detailed logs
-- Look for `[Codex]` prefixed messages
+- Look for `[CodeScribe]` prefixed messages
 - Error dialogs include "View Details" for comprehensive debugging
 
 ## 🤝 Contributing
@@ -226,7 +226,7 @@ Created for **HackRice 2025**. To contribute:
 ### Development Setup
 ```bash
 git clone <repository>
-cd codex
+cd codescribe
 npm install
 npm run compile
 # Open in VS Code and press F5 to debug
@@ -248,7 +248,7 @@ MIT License - see LICENSE file for details
 
 ## 🏺 Happy Code Archaeology!
 
-*"Every line of code has a story. Codex helps you discover it."*
+*"Every line of code has a story. CodeScribe helps you discover it."*
 
 ---
 

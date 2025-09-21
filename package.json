@@ -1,6 +1,6 @@
 {
-  "name": "codex",
-  "displayName": "Codex: The Code Archeology Assistant",
+  "name": "codescribe",
+  "displayName": "CodeScribe: The Code Archeology Assistant",
   "description": "Automates code archeology by analyzing git history, GitHub PRs, and generating AI-powered summaries of code intent",
   "version": "1.0.0",
   "publisher": "hackrice-team",
@@ -29,28 +29,28 @@
   "contributes": {
     "commands": [
       {
-        "command": "codex.analyzeSelection",
-        "title": "Codex: Analyze Selection"
+        "command": "codescribe.analyzeSelection",
+        "title": "CodeScribe: Analyze Selection"
       },
       {
-        "command": "codex.configureApiKey",
-        "title": "Codex: Configure API Key"
+        "command": "codescribe.configureApiKey",
+        "title": "CodeScribe: Configure API Key"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "codex.analyzeSelection",
+          "command": "codescribe.analyzeSelection",
           "when": "editorHasSelection",
           "group": "1_modification"
         }
       ]
     },
     "views": {
-      "codex": [
+      "codescribe": [
         {
           "type": "webview",
-          "id": "codex.resultsView",
+          "id": "codescribe.resultsView",
           "name": "Results",
           "when": "true"
         }
@@ -59,16 +59,16 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "codex",
-          "title": "Codex",
+          "id": "codescribe",
+          "title": "CodeScribe",
           "icon": "$(telescope)"
         }
       ]
     },
     "configuration": {
-      "title": "Codex",
+      "title": "CodeScribe",
       "properties": {
-        "codex.geminiModel": {
+        "codescribe.geminiModel": {
           "type": "string",
           "enum": [
             "gemini-2.5-pro",

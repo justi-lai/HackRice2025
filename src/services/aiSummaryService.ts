@@ -11,7 +11,7 @@ export class AiSummaryService {
         startLine?: number,
         endLine?: number
     ): Promise<string> {
-        const config = vscode.workspace.getConfiguration('codex');
+        const config = vscode.workspace.getConfiguration('codescribe');
         const model = config.get<string>('geminiModel', 'gemini-1.5-pro');
         
         // Validate model availability

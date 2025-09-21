@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { CodexResults } from '../types';
+import { CodeScribeResults } from '../types';
 
-export class CodexWebviewProvider implements vscode.WebviewViewProvider {
-    public static readonly viewType = 'codex.resultsView';
+export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
+    public static readonly viewType = 'codescribe.resultsView';
     private _view?: vscode.WebviewView;
     private _selectedText: string = '';
 
@@ -23,13 +23,13 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.html = this._getInitialHtml();
     }
 
-    public async showResults(results: CodexResults) {
+    public async showResults(results: CodeScribeResults) {
         if (this._view) {
             this._selectedText = results.selectedText;
             this._view.webview.html = this._getResultsHtml(results);
             
             // Set context to show the view
-            await vscode.commands.executeCommand('setContext', 'codex.hasResults', true);
+            await vscode.commands.executeCommand('setContext', 'codescribe.hasResults', true);
         }
     }
 
@@ -39,7 +39,7 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Codex Results</title>
+            <title>CodeScribe Results</title>
             <style>
                 body {
                     font-family: var(--vscode-font-family);
@@ -106,13 +106,13 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
         </head>
         <body>
             <div class="welcome">
-                <h2>Codex: Code Archaeology Assistant</h2>
+                <h2>CodeScribe: Code Archaeology Assistant</h2>
                 <div class="subtitle">Uncover the stories behind your code</div>
                 <p>Discover why code exists, how it evolved, and what decisions shaped it using AI-powered git analysis.</p>
                 <div class="instruction">
                     <strong>Quick Start</strong>
                     <div class="step">Select any block of code in your editor</div>
-                    <div class="step">Right-click → "Codex: Analyze Selection"</div>
+                                        <div class="step">Right-click → "CodeScribe: Analyze Selection"</div>
                     <div class="step">Get instant AI insights and commit timeline</div>
                 </div>
             </div>
@@ -120,7 +120,7 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
         </html>`;
     }
 
-    private _getResultsHtml(results: CodexResults): string {
+    private _getResultsHtml(results: CodeScribeResults): string {
         const timelineHtml = this._generateTimelineHtml(results.analysisResult.timeline);
         
         return `<!DOCTYPE html>
@@ -128,7 +128,7 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Codex Results</title>
+            <title>CodeScribe Results</title>
             <style>
                 body {
                     font-family: var(--vscode-font-family);
@@ -665,9 +665,9 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
                 ` : '';
                 
                 // Debug logging
-                console.log(`[Codex] Processing commit ${commit.hash}`);
-                console.log(`[Codex] Diff length: ${commit.diff ? commit.diff.length : 0}`);
-                console.log(`[Codex] Diff content preview:`, commit.diff ? commit.diff.substring(0, 200) + '...' : 'No diff');
+                console.log(`[CodeScribe] Processing commit ${commit.hash}`);
+                console.log(`[CodeScribe] Diff length: ${commit.diff ? commit.diff.length : 0}`);
+                console.log(`[CodeScribe] Diff content preview:`, commit.diff ? commit.diff.substring(0, 200) + '...' : 'No diff');
                 
                 return `
                     <div class="timeline-item commit">
@@ -786,13 +786,13 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
     }
 
     private _formatGitDiff(diff: string, filename: string, selectedText: string = ''): string {
-        console.log(`[Codex] _formatGitDiff called with:`);
-        console.log(`[Codex] - filename: ${filename}`);
-        console.log(`[Codex] - diff length: ${diff ? diff.length : 0}`);
-        console.log(`[Codex] - diff content:`, diff ? diff.substring(0, 500) + '...' : 'No diff');
+        console.log(`[CodeScribe] _formatGitDiff called with:`);
+        console.log(`[CodeScribe] - filename: ${filename}`);
+        console.log(`[CodeScribe] - diff length: ${diff ? diff.length : 0}`);
+        console.log(`[CodeScribe] - diff content:`, diff ? diff.substring(0, 500) + '...' : 'No diff');
         
         if (!diff || diff.trim().length === 0) {
-            console.log(`[Codex] Returning 'No changes' - diff is empty`);
+            console.log(`[CodeScribe] Returning 'No changes' - diff is empty`);
             return '<em>No changes</em>';
         }
         
@@ -802,8 +802,8 @@ export class CodexWebviewProvider implements vscode.WebviewViewProvider {
     }
     
     private _renderFullDiff(lines: string[], filename: string): string {
-        console.log(`[Codex] _renderFullDiff called with ${lines.length} lines`);
-        console.log(`[Codex] First 10 lines:`, lines.slice(0, 10));
+        console.log(`[CodeScribe] _renderFullDiff called with ${lines.length} lines`);
+        console.log(`[CodeScribe] First 10 lines:`, lines.slice(0, 10));
         
         let html = '';
         let lineNum = 0;

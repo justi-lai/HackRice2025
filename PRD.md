@@ -1,6 +1,6 @@
-# Product Requirements Document: Codex
+# Product Requirements Document: CodeScribe
 
-* **Project Name:** Codex: The Code Archeology Assistant
+* **Project Name:** CodeScribe: The Code Archeology Assistant
 * **Author:** Gemini
 * **Status:** Version 1.0 - Draft
 * **Date:** September 20, 2025
@@ -15,7 +15,7 @@ Developers constantly encounter unfamiliar or legacy code and ask the fundamenta
 
 ### 1.2 Proposed Solution
 
-**Codex** is a VS Code extension that automates the entire code archeology process. By highlighting a block of code, a developer can invoke Codex to instantly receive a rich, narrative history. Codex traces the code's evolution through commits and pull requests, consolidates the discussions and related issues, and uses AI to generate a concise summary of the original intent. It presents this information directly within the editor, transforming a lengthy investigation into a single, seamless action.
+**CodeScribe** is a VS Code extension that automates the entire code archeology process. By highlighting a block of code, a developer can invoke CodeScribe to instantly receive a rich, narrative history. CodeScribe traces the code's evolution through commits and pull requests, consolidates the discussions and related issues, and uses AI to generate a concise summary of the original intent. It presents this information directly within the editor, transforming a lengthy investigation into a single, seamless action.
 
 ---
 
@@ -64,8 +64,8 @@ Developers constantly encounter unfamiliar or legacy code and ask the fundamenta
 
 ### FR-1: Invocation
 
-* **FR-1.1: Context Menu:** Users can right-click on a selection of text and choose "Codex: Analyze Selection" from the context menu.
-* **FR-1.2: Command Palette:** Users can open the Command Palette (Ctrl/Cmd+Shift+P) and run the command "Codex: Analyze Selection".
+* **FR-1.1: Context Menu:** Users can right-click on a selection of text and choose "CodeScribe: Analyze Selection" from the context menu.
+* **FR-1.2: Command Palette:** Users can open the Command Palette (Ctrl/Cmd+Shift+P) and run the command "CodeScribe: Analyze Selection".
 * **FR-1.3: Input Validation:** If the command is run without a valid text selection, the extension will show an informative message (e.g., "Please select a block of code to analyze.").
 
 ### FR-2: Data Aggregation Engine
@@ -113,9 +113,9 @@ Developers constantly encounter unfamiliar or legacy code and ask the fundamenta
 ## 7. User Flow
 
 1.  **Selection:** Priya highlights a confusing block of code in `auth-service.ts`.
-2.  **Invocation:** She right-clicks and selects "Codex: Analyze Selection".
-3.  **Feedback:** A progress notification appears in the bottom-right corner: "Codex: Analyzing code history...".
-4.  **Results:** A new "Codex" panel opens in the sidebar.
+2.  **Invocation:** She right-clicks and selects "CodeScribe: Analyze Selection".
+3.  **Feedback:** A progress notification appears in the bottom-right corner: "CodeScribe: Analyzing code history...".
+4.  **Results:** A new "CodeScribe" panel opens in the sidebar.
 5.  **Summary:** At the top of the panel, she reads the AI summary: *"This logic was introduced to handle a race condition during token refresh for legacy clients (see issue #431). The original implementation caused intermittent logouts, and this PR added a locking mechanism to solve it."*
 6.  **Deep Dive:** Intrigued, she browses the timeline below the summary. She sees two relevant PRs. She expands the first one, reads the original description, and clicks the link to view the heated discussion on GitHub.
 7.  **Understanding:** In under a minute, Priya fully understands the context and can now proceed with her bug fix confidently.
@@ -143,5 +143,5 @@ Developers constantly encounter unfamiliar or legacy code and ask the fundamenta
 
 * **Expanded Host Support:** Add support for GitLab (using `glab` CLI) and Bitbucket.
 * **Deeper Issue Integration:** Use Jira/Asana APIs to pull full ticket details, not just titles.
-* **Inline Annotations:** Display a subtle CodeLens annotation above functions/classes indicating "Codex has history for this block."
+* **Inline Annotations:** Display a subtle CodeLens annotation above functions/classes indicating "CodeScribe has history for this block."
 * **Contribution Analysis:** Provide insights on the key authors and reviewers of a piece of code.

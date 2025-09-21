@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 
 export class ApiKeyManager {
-    private static readonly API_KEY_SECRET = 'codex.geminiApiKey';
+    private static readonly API_KEY_SECRET = 'codescribe.geminiApiKey';
 
     constructor(private context: vscode.ExtensionContext) {}
 
@@ -13,13 +13,13 @@ export class ApiKeyManager {
     async getApiKey(): Promise<string> {
         const apiKey = await this.context.secrets.get(ApiKeyManager.API_KEY_SECRET);
         if (!apiKey) {
-            throw new Error('No Gemini API key configured. Please run "Codex: Configure API Key" command.');
+            throw new Error('No Gemini API key configured. Please run "CodeScribe: Configure API Key" command.');
         }
         return apiKey;
     }
 
     async configureApiKey(): Promise<void> {
-        const config = vscode.workspace.getConfiguration('codex');
+        const config = vscode.workspace.getConfiguration('codescribe');
 
         // Let user choose Gemini model
         const model = await vscode.window.showQuickPick([
@@ -118,7 +118,7 @@ export class ApiKeyManager {
     }
 
     getModelName(): string {
-        const config = vscode.workspace.getConfiguration('codex');
+        const config = vscode.workspace.getConfiguration('codescribe');
         return config.get<string>('geminiModel', 'gemini-1.5-pro');
     }
 }

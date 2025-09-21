@@ -148,20 +148,20 @@ export class GitAnalysisEngine {
             // Get the full diff for this commit
             // First try the current file path
             let gitCommand = `git show ${commitHash} --format="" -- "${filePath}"`;
-            console.log(`[Codex] Executing git command: ${gitCommand}`);
-            console.log(`[Codex] Working directory: ${workingDir}`);
-            console.log(`[Codex] File path: ${filePath}`);
+            console.log(`[CodeScribe] Executing git command: ${gitCommand}`);
+            console.log(`[CodeScribe] Working directory: ${workingDir}`);
+            console.log(`[CodeScribe] File path: ${filePath}`);
             
             let { stdout: fullDiff } = await execAsync(
                 gitCommand,
                 { cwd: workingDir }
             );
             
-            console.log(`[Codex] Git command output length: ${fullDiff.length}`);
+            console.log(`[CodeScribe] Git command output length: ${fullDiff.length}`);
             
             // If no diff found, the file might have been at a different path in this commit
             if (!fullDiff.trim()) {
-                console.log(`[Codex] No diff found with current path, checking what files this commit modified...`);
+                console.log(`[CodeScribe] No diff found with current path, checking what files this commit modified...`);
                 
                 // Get the list of files modified in this commit
                 const { stdout: modifiedFiles } = await execAsync(
@@ -169,36 +169,36 @@ export class GitAnalysisEngine {
                     { cwd: workingDir }
                 );
                 
-                console.log(`[Codex] Commit modified files: ${modifiedFiles.trim()}`);
+                console.log(`[CodeScribe] Commit modified files: ${modifiedFiles.trim()}`);
                 
                 // Look for a file with the same name but different path
                 const fileName = filePath.split('/').pop(); // Get just the filename
                 const possiblePaths = modifiedFiles.trim().split('\n').filter(f => f.endsWith(fileName || ''));
                 
-                console.log(`[Codex] Looking for files ending with: ${fileName}`);
-                console.log(`[Codex] Possible paths: ${possiblePaths.join(', ')}`);
+                console.log(`[CodeScribe] Looking for files ending with: ${fileName}`);
+                console.log(`[CodeScribe] Possible paths: ${possiblePaths.join(', ')}`);
                 
                 // Try each possible path
                 for (const possiblePath of possiblePaths) {
                     if (possiblePath && possiblePath !== filePath) {
-                        console.log(`[Codex] Trying alternative path: ${possiblePath}`);
+                        console.log(`[CodeScribe] Trying alternative path: ${possiblePath}`);
                         gitCommand = `git show ${commitHash} --format="" -- "${possiblePath}"`;
                         const result = await execAsync(gitCommand, { cwd: workingDir });
                         if (result.stdout.trim()) {
                             fullDiff = result.stdout;
-                            console.log(`[Codex] Found diff with path: ${possiblePath} (length: ${fullDiff.length})`);
+                            console.log(`[CodeScribe] Found diff with path: ${possiblePath} (length: ${fullDiff.length})`);
                             break;
                         }
                     }
                 }
             }
             
-            console.log(`[Codex] Final git command output length: ${fullDiff.length}`);
-            console.log(`[Codex] Git command output preview: ${fullDiff.substring(0, 200)}...`);
+            console.log(`[CodeScribe] Final git command output length: ${fullDiff.length}`);
+            console.log(`[CodeScribe] Git command output preview: ${fullDiff.substring(0, 200)}...`);
             
             if (!fullDiff.trim()) {
                 const debugMsg = `# No changes found for ${filePath} in this commit\n# Affected lines: ${affectedLines.join(', ')}\n# Git command: ${gitCommand}\n# Working dir: ${workingDir}`;
-                console.log(`[Codex] Returning debug message: ${debugMsg}`);
+                console.log(`[CodeScribe] Returning debug message: ${debugMsg}`);
                 return debugMsg;
             }
             

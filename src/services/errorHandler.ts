@@ -8,7 +8,7 @@ export class ErrorHandler {
         // Check for specific error types and provide helpful guidance
         if (errorMessage.includes('not a git repository')) {
             await vscode.window.showErrorMessage(
-                'Codex: The current file is not in a Git repository. Please open a file that is tracked by Git.',
+                'CodeScribe: The current file is not in a Git repository. Please open a file that is tracked by Git.',
                 'Open Git Repository'
             ).then(selection => {
                 if (selection === 'Open Git Repository') {
@@ -20,7 +20,7 @@ export class ErrorHandler {
 
         if (errorMessage.includes('gh: command not found') || errorMessage.includes('GitHub CLI')) {
             await vscode.window.showErrorMessage(
-                'Codex: GitHub CLI (gh) is not installed or not in PATH.',
+                'CodeScribe: GitHub CLI (gh) is not installed or not in PATH.',
                 'Installation Guide'
             ).then(selection => {
                 if (selection === 'Installation Guide') {
@@ -32,11 +32,11 @@ export class ErrorHandler {
 
         if (errorMessage.includes('API key') || errorMessage.includes('authentication') || errorMessage.includes('Gemini')) {
             await vscode.window.showErrorMessage(
-                'Codex: Gemini API key issue. Please reconfigure your API key.',
+                'CodeScribe: Gemini API key issue. Please reconfigure your API key.',
                 'Configure Gemini API Key'
             ).then(selection => {
                 if (selection === 'Configure Gemini API Key') {
-                    vscode.commands.executeCommand('codex.configureApiKey');
+                    vscode.commands.executeCommand('codescribe.configureApiKey');
                 }
             });
             return;
@@ -44,7 +44,7 @@ export class ErrorHandler {
 
         if (errorMessage.includes('rate limit')) {
             await vscode.window.showWarningMessage(
-                'Codex: API rate limit exceeded. Please wait a moment before trying again.',
+                'CodeScribe: API rate limit exceeded. Please wait a moment before trying again.',
                 'Retry in 1 minute'
             );
             return;
@@ -52,11 +52,11 @@ export class ErrorHandler {
 
         if (errorMessage.includes('network') || errorMessage.includes('timeout')) {
             await vscode.window.showErrorMessage(
-                'Codex: Network error occurred. Please check your internet connection and try again.',
+                'CodeScribe: Network error occurred. Please check your internet connection and try again.',
                 'Retry'
             ).then(selection => {
                 if (selection === 'Retry') {
-                    vscode.commands.executeCommand('codex.analyzeSelection');
+                    vscode.commands.executeCommand('codescribe.analyzeSelection');
                 }
             });
             return;
@@ -64,7 +64,7 @@ export class ErrorHandler {
 
         // Generic error handling
         const action = await vscode.window.showErrorMessage(
-            `Codex: ${errorMessage}`,
+            `CodeScribe: ${errorMessage}`,
             'View Details',
             'Report Issue'
         );
@@ -78,8 +78,8 @@ export class ErrorHandler {
 
     private static async showErrorDetails(error: Error, context: string): Promise<void> {
         const details = `
-Codex Error Details
-==================
+CodeScribe Error Details
+========================
 
 Context: ${context}
 Timestamp: ${new Date().toISOString()}
@@ -101,7 +101,7 @@ Environment:
     }
 
     private static openIssueReport(error: Error, context: string): void {
-        const title = encodeURIComponent(`Codex Error: ${error.message.substring(0, 50)}...`);
+        const title = encodeURIComponent(`CodeScribe Error: ${error.message.substring(0, 50)}...`);
         const body = encodeURIComponent(`
 **Error Context:** ${context}
 
@@ -121,13 +121,13 @@ Environment:
 **Environment:**
 - VS Code Version: ${vscode.version}
 - Platform: ${process.platform}
-- Codex Version: 1.0.0
+- CodeScribe Version: 1.0.0
 
 **Additional Context:**
 [Add any other context about the problem here]
         `);
 
-        const issueUrl = `https://github.com/your-repo/codex/issues/new?title=${title}&body=${body}`;
+        const issueUrl = `https://github.com/your-repo/codescribe/issues/new?title=${title}&body=${body}`;
         vscode.env.openExternal(vscode.Uri.parse(issueUrl));
     }
 }

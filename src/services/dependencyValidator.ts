@@ -59,7 +59,7 @@ export class DependencyValidator {
             missingDeps.push('GitHub CLI (gh)');
         }
 
-        const message = `Codex requires the following dependencies to be installed and available in your PATH: ${missingDeps.join(', ')}.`;
+        const message = `CodeScribe requires the following dependencies to be installed and available in your PATH: ${missingDeps.join(', ')}.`;
         
         const action = await vscode.window.showErrorMessage(
             message,

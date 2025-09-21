@@ -1,32 +1,32 @@
 import * as vscode from 'vscode';
 import { DependencyValidator } from './services/dependencyValidator';
 import { ApiKeyManager } from './services/apiKeyManager';
-import { CodexWebviewProvider } from './webview/codexWebviewProvider';
+import { CodeScribeWebviewProvider } from './webview/codescribeWebviewProvider';
 import { GitAnalysisEngine } from './services/gitAnalysisEngine';
 import { AiSummaryService } from './services/aiSummaryService';
 import { ErrorHandler, UserFeedback } from './services/errorHandler';
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Codex extension is now active!');
+    console.log('CodeScribe extension is now active!');
 
     // Initialize services
     const dependencyValidator = new DependencyValidator();
     const apiKeyManager = new ApiKeyManager(context);
     const gitAnalysisEngine = new GitAnalysisEngine();
     const aiSummaryService = new AiSummaryService();
-    const webviewProvider = new CodexWebviewProvider(context.extensionUri);
+    const webviewProvider = new CodeScribeWebviewProvider(context.extensionUri);
 
     // Register webview provider
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(
-            'codex.resultsView',
+            'codescribe.resultsView',
             webviewProvider
         )
     );
 
     // Register commands
     const analyzeSelectionCommand = vscode.commands.registerCommand(
-        'codex.analyzeSelection',
+        'codescribe.analyzeSelection',
         async () => {
             try {
                 // Validate dependencies first
@@ -39,11 +39,11 @@ export function activate(context: vscode.ExtensionContext) {
                 const hasApiKey = await apiKeyManager.hasApiKey();
                 if (!hasApiKey) {
                     const configure = await vscode.window.showInformationMessage(
-                        'Codex requires a Gemini API key to generate summaries.',
+                        'CodeScribe requires a Gemini API key to generate summaries.',
                         'Configure Gemini API Key'
                     );
                     if (configure) {
-                        await vscode.commands.executeCommand('codex.configureApiKey');
+                        await vscode.commands.executeCommand('codescribe.configureApiKey');
                         // Check again if user actually configured it
                         const hasApiKeyAfterConfig = await apiKeyManager.hasApiKey();
                         if (!hasApiKeyAfterConfig) {
@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
 
                 // Show progress
                 await UserFeedback.showProgress(
-                    'Codex: Analyzing code history...',
+                    'CodeScribe: Analyzing code history...',
                     async (progress, token) => {
                     try {
                         const document = editor.document;
@@ -110,7 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
                         progress.report({ increment: 40, message: 'Displaying results...' });
 
                         // Ensure the webview is revealed first
-                        await vscode.commands.executeCommand('codex.resultsView.focus');
+                        await vscode.commands.executeCommand('codescribe.resultsView.focus');
                         
                         // Small delay to ensure webview is ready
                         await new Promise(resolve => setTimeout(resolve, 100));
@@ -144,7 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     const configureApiKeyCommand = vscode.commands.registerCommand(
-        'codex.configureApiKey',
+        'codescribe.configureApiKey',
         async () => {
             await apiKeyManager.configureApiKey();
         }
