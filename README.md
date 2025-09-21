@@ -1,4 +1,6 @@
-# CodeScribe: The Code Archaeology Assis## 🚀 How It Works
+# CodeScribe: The Code Archaeology Assistant
+
+## 🚀 How It Works
 
 ### Code Archaeology Workflow
 1. **Select Code**: Highlight any block of code in a Git repository
