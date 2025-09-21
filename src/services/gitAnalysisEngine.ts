@@ -148,57 +148,39 @@ export class GitAnalysisEngine {
             // Get the full diff for this commit
             // First try the current file path
             let gitCommand = `git show ${commitHash} --format="" -- "${filePath}"`;
-            console.log(`[CodeScribe] Executing git command: ${gitCommand}`);
-            console.log(`[CodeScribe] Working directory: ${workingDir}`);
-            console.log(`[CodeScribe] File path: ${filePath}`);
             
             let { stdout: fullDiff } = await execAsync(
                 gitCommand,
                 { cwd: workingDir }
             );
             
-            console.log(`[CodeScribe] Git command output length: ${fullDiff.length}`);
-            
             // If no diff found, the file might have been at a different path in this commit
             if (!fullDiff.trim()) {
-                console.log(`[CodeScribe] No diff found with current path, checking what files this commit modified...`);
-                
                 // Get the list of files modified in this commit
                 const { stdout: modifiedFiles } = await execAsync(
                     `git show ${commitHash} --name-only --format=""`,
                     { cwd: workingDir }
                 );
                 
-                console.log(`[CodeScribe] Commit modified files: ${modifiedFiles.trim()}`);
-                
                 // Look for a file with the same name but different path
                 const fileName = filePath.split('/').pop(); // Get just the filename
                 const possiblePaths = modifiedFiles.trim().split('\n').filter(f => f.endsWith(fileName || ''));
                 
-                console.log(`[CodeScribe] Looking for files ending with: ${fileName}`);
-                console.log(`[CodeScribe] Possible paths: ${possiblePaths.join(', ')}`);
-                
                 // Try each possible path
                 for (const possiblePath of possiblePaths) {
                     if (possiblePath && possiblePath !== filePath) {
-                        console.log(`[CodeScribe] Trying alternative path: ${possiblePath}`);
                         gitCommand = `git show ${commitHash} --format="" -- "${possiblePath}"`;
                         const result = await execAsync(gitCommand, { cwd: workingDir });
                         if (result.stdout.trim()) {
                             fullDiff = result.stdout;
-                            console.log(`[CodeScribe] Found diff with path: ${possiblePath} (length: ${fullDiff.length})`);
                             break;
                         }
                     }
                 }
             }
             
-            console.log(`[CodeScribe] Final git command output length: ${fullDiff.length}`);
-            console.log(`[CodeScribe] Git command output preview: ${fullDiff.substring(0, 200)}...`);
-            
             if (!fullDiff.trim()) {
                 const debugMsg = `# No changes found for ${filePath} in this commit\n# Affected lines: ${affectedLines.join(', ')}\n# Git command: ${gitCommand}\n# Working dir: ${workingDir}`;
-                console.log(`[CodeScribe] Returning debug message: ${debugMsg}`);
                 return debugMsg;
             }
             
@@ -677,6 +659,75 @@ export class GitAnalysisEngine {
         }
         
         return linkedIssues;
+    }
+
+    async getCurrentChanges(workspaceRoot?: string): Promise<{staged: string, unstaged: string, untracked: string}> {
+        try {
+            // Find git root
+            const gitRoot = workspaceRoot ? await this.findGitRoot(workspaceRoot) : await this.findGitRoot(process.cwd());
+            if (!gitRoot) {
+                throw new Error('Not a git repository');
+            }
+
+            // Get staged changes
+            const { stdout: staged } = await execAsync('git diff --cached', { cwd: gitRoot });
+            
+            // Get unstaged changes  
+            const { stdout: unstaged } = await execAsync('git diff', { cwd: gitRoot });
+            
+            // Get untracked files
+            const { stdout: untrackedFiles } = await execAsync('git ls-files --others --exclude-standard', { cwd: gitRoot });
+            
+            return {
+                staged: staged.trim(),
+                unstaged: unstaged.trim(), 
+                untracked: untrackedFiles.trim()
+            };
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+            throw new Error(`Failed to get current changes: ${errorMessage}`);
+        }
+    }
+
+    async getFileStatus(filePath: string): Promise<{status: string, diff: string}> {
+        try {
+            const gitRoot = await this.findGitRoot(filePath);
+            if (!gitRoot) {
+                throw new Error('Not a git repository');
+            }
+
+            const relativePath = await this.getRelativePathFromGitRoot(filePath, gitRoot);
+            
+            // Get file status
+            const { stdout: status } = await execAsync(`git status --porcelain "${relativePath}"`, { cwd: gitRoot });
+            
+            // Get diff for this specific file
+            let diff = '';
+            if (status.trim()) {
+                try {
+                    // Try unstaged diff first
+                    const { stdout: unstagedDiff } = await execAsync(`git diff "${relativePath}"`, { cwd: gitRoot });
+                    if (unstagedDiff.trim()) {
+                        diff = unstagedDiff;
+                    } else {
+                        // Try staged diff
+                        const { stdout: stagedDiff } = await execAsync(`git diff --cached "${relativePath}"`, { cwd: gitRoot });
+                        diff = stagedDiff;
+                    }
+                } catch (diffError) {
+                    // File might be new/untracked
+                    diff = 'New file (untracked)';
+                }
+            }
+            
+            return {
+                status: status.trim() || 'No changes',
+                diff: diff.trim()
+            };
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+            throw new Error(`Failed to get file status: ${errorMessage}`);
+        }
     }
 
     private createTimeline(commits: CommitInfo[], pullRequests: PullRequestInfo[]): TimelineItem[] {

@@ -50,6 +50,14 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.html = this._getInitialHtml();
     }
 
+    public getCurrentResults(): CodeScribeResults | undefined {
+        return this._currentResults;
+    }
+
+    public getSelectedText(): string {
+        return this._selectedText;
+    }
+
     public async showResults(results: CodeScribeResults, financialSummary?: string) {
         if (this._view) {
             this._selectedText = results.selectedText;
@@ -97,73 +105,72 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                     font-weight: var(--vscode-font-weight);
                     color: var(--vscode-foreground);
                     background-color: var(--vscode-editor-background);
-                    padding: 12px;
+                    padding: 40px 20px;
                     margin: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 100vh;
                 }
                 .welcome {
                     text-align: center;
-                    padding: 20px 16px;
-                    max-width: none;
-                    margin: 0;
+                    max-width: 500px;
                 }
                 .welcome h2 {
-                    color: var(--vscode-textPreformat-foreground);
-                    margin-bottom: 8px;
-                    font-size: 1.3em;
-                    font-weight: 600;
-                    line-height: 1.3;
+                    color: var(--vscode-foreground);
+                    margin-bottom: 16px;
+                    font-size: 24px;
+                    font-weight: 400;
                 }
                 .welcome .subtitle {
                     color: var(--vscode-descriptionForeground);
-                    font-size: 0.85em;
-                    margin-bottom: 16px;
-                    font-style: italic;
+                    font-size: 14px;
+                    margin-bottom: 32px;
                     line-height: 1.4;
                 }
-                .welcome p {
-                    color: var(--vscode-descriptionForeground);
-                    line-height: 1.4;
-                    margin-bottom: 16px;
-                    font-size: 0.9em;
-                }
-                .instruction {
-                    background: var(--vscode-textBlockQuote-background);
-                    border-left: 4px solid var(--vscode-charts-blue);
-                    padding: 12px 16px;
-                    margin: 16px 0;
-                    border-radius: 6px;
+                .capabilities-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
                     text-align: left;
                 }
-                .instruction strong {
-                    color: var(--vscode-charts-blue);
-                    display: block;
-                    margin-bottom: 6px;
-                    font-size: 0.95em;
+                .capability-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    font-size: 14px;
+                    color: var(--vscode-foreground);
+                    line-height: 1.4;
                 }
-                .step {
-                    margin: 6px 0;
-                    padding-left: 8px;
-                    font-size: 0.85em;
-                    line-height: 1.3;
-                }
-                .step::before {
-                    content: "→";
-                    color: var(--vscode-charts-blue);
-                    font-weight: bold;
-                    margin-right: 8px;
+                .capability-item .codicon {
+                    color: var(--vscode-textLink-foreground);
+                    font-size: 16px;
+                    flex-shrink: 0;
                 }
             </style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons@0.0.35/dist/codicon.css">
         </head>
         <body>
             <div class="welcome">
-                <h2>CodeScribe: Code Archaeology Assistant</h2>
-                <div class="subtitle">Uncover the stories behind your code</div>
-                <p>Discover why code exists, how it evolved, and what decisions shaped it using AI-powered git analysis.</p>
-                <div class="instruction">
-                    <strong>Quick Start</strong>
-                    <div class="step">Select any block of code in your editor</div>
-                                        <div class="step">Right-click → "CodeScribe: Analyze Selection"</div>
-                    <div class="step">Get instant AI insights and commit timeline</div>
+                <h2>CodeScribe Analysis</h2>
+                <div class="subtitle">Select code in your editor to analyze its history and evolution</div>
+                <div class="capabilities-list">
+                    <div class="capability-item">
+                        <span class="codicon codicon-git-commit"></span>
+                        <span>Track code evolution through git history</span>
+                    </div>
+                    <div class="capability-item">
+                        <span class="codicon codicon-search"></span>
+                        <span>Understand why code exists and how it changed</span>
+                    </div>
+                    <div class="capability-item">
+                        <span class="codicon codicon-timeline-view"></span>
+                        <span>View detailed timeline of modifications</span>
+                    </div>
+                    <div class="capability-item">
+                        <span class="codicon codicon-code"></span>
+                        <span>AI-powered analysis and insights</span>
+                    </div>
                 </div>
             </div>
         </body>
@@ -186,9 +193,9 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                     font-weight: var(--vscode-font-weight);
                     color: var(--vscode-foreground);
                     background-color: var(--vscode-editor-background);
-                    padding: 16px;
+                    padding: 24px;
                     margin: 0;
-                    line-height: 1.5;
+                    line-height: 1.6;
                     word-wrap: break-word;
                     overflow-wrap: break-word;
                 }
@@ -207,9 +214,9 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                 }
                 
                 .header {
-                    border-bottom: 1px solid var(--vscode-panel-border);
-                    padding-bottom: 16px;
-                    margin-bottom: 20px;
+                    border-bottom: 1px solid var(--vscode-input-border);
+                    padding-bottom: 20px;
+                    margin-bottom: 32px;
                     word-wrap: break-word;
                 }
                 
@@ -226,6 +233,13 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                     align-items: flex-start;
                     gap: 12px;
                     flex-wrap: wrap;
+                }
+                
+                .header-controls {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    flex-shrink: 0;
                 }
                 
                 .analysis-mode-toggle {
@@ -360,18 +374,20 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                 }
                 
                 .summary {
-                    background: var(--vscode-textBlockQuote-background);
-                    border-left: 4px solid var(--vscode-charts-blue);
-                    padding: 16px;
-                    margin-bottom: 24px;
-                    border-radius: 4px;
+                    background: transparent;
+                    border: none;
+                    border-left: 3px solid var(--vscode-textLink-foreground);
+                    padding: 20px 0 20px 16px;
+                    margin-bottom: 32px;
+                    border-radius: 0;
                     overflow: hidden;
                 }
                 
                 .summary h3 {
-                    margin: 0 0 12px 0;
-                    color: var(--vscode-charts-blue);
-                    font-size: 1.1em;
+                    margin: 0 0 16px 0;
+                    color: var(--vscode-foreground);
+                    font-size: 18px;
+                    font-weight: 500;
                 }
                 
                 .summary-content {
@@ -380,31 +396,33 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                 }
                 
                 .summary-content h4 {
-                    color: var(--vscode-textPreformat-foreground);
-                    font-weight: 600;
-                    margin: 16px 0 8px 0;
-                    font-size: 1em;
+                    color: var(--vscode-foreground);
+                    font-weight: 500;
+                    margin: 20px 0 8px 0;
+                    font-size: 16px;
                 }
                 
                 .summary-content p {
-                    margin: 8px 0;
+                    margin: 12px 0;
+                    color: var(--vscode-foreground);
                 }
                 
                 .summary-content ul {
-                    margin: 8px 0;
+                    margin: 12px 0;
                     padding-left: 20px;
                 }
                 
                 .summary-content li {
-                    margin: 4px 0;
+                    margin: 6px 0;
+                    color: var(--vscode-foreground);
                 }
                 
                 .assessment-section {
-                    background: var(--vscode-editor-background);
-                    border: 1px solid var(--vscode-panel-border);
-                    border-radius: 4px;
-                    padding: 12px;
-                    margin: 12px 0;
+                    background: transparent;
+                    border: 1px solid var(--vscode-input-border);
+                    border-radius: 8px;
+                    padding: 16px;
+                    margin: 16px 0;
                     overflow: hidden;
                 }
                 
@@ -456,15 +474,16 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                 }
                 
                 .timeline h3 {
-                    color: var(--vscode-textPreformat-foreground);
-                    margin-bottom: 16px;
-                    font-size: 1.1em;
+                    color: var(--vscode-foreground);
+                    margin-bottom: 20px;
+                    font-size: 18px;
+                    font-weight: 500;
                 }
                 
                 .timeline-item {
-                    border-left: 2px solid var(--vscode-panel-border);
-                    padding-left: 16px;
-                    margin-bottom: 12px;
+                    border-left: 2px solid var(--vscode-input-border);
+                    padding-left: 20px;
+                    margin-bottom: 20px;
                     position: relative;
                     word-wrap: break-word;
                     text-align: left;
@@ -474,25 +493,25 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                     content: '';
                     position: absolute;
                     left: -6px;
-                    top: 6px;
+                    top: 8px;
                     width: 10px;
                     height: 10px;
                     border-radius: 50%;
-                    background: var(--vscode-charts-green);
+                    background: var(--vscode-textLink-foreground);
                 }
                 
                 .timeline-item.commit::before {
-                    background: var(--vscode-charts-orange);
+                    background: var(--vscode-textLink-foreground);
                 }
                 
                 .item-header {
                     display: flex;
                     align-items: flex-start;
-                    margin-bottom: 4px;
+                    margin-bottom: 8px;
                     cursor: pointer;
-                    padding: 4px 0px;
-                    border-radius: 4px;
-                    transition: background-color 0.2s;
+                    padding: 8px 0px;
+                    border-radius: 6px;
+                    transition: background-color 0.15s;
                     min-height: 0;
                     flex-wrap: wrap;
                     gap: 8px;
@@ -511,11 +530,13 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                 }
                 
                 .item-title {
-                    font-weight: 600;
+                    font-weight: 500;
                     flex: 1;
                     min-width: 0;
                     word-wrap: break-word;
                     overflow-wrap: break-word;
+                    color: var(--vscode-foreground);
+                    font-size: 15px;
                 }
                 
                 .item-meta {
@@ -769,17 +790,19 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                             <strong>Lines:</strong> ${results.lineRange}
                         </div>
                         
-                        <div class="analysis-mode-toggle">
-                            <div class="toggle-label" onclick="toggleAnalysisMode()">
-                                <span class="mode-icon">🔍</span>
-                                <span>SWE</span>
-                            </div>
-                            <div class="toggle-switch" onclick="toggleAnalysisMode()" id="modeToggle">
-                                <div class="toggle-slider"></div>
-                            </div>
-                            <div class="toggle-label" onclick="toggleAnalysisMode()">
-                                <span class="mode-icon">💰</span>
-                                <span>Financial</span>
+                        <div class="header-controls">
+                            <div class="analysis-mode-toggle">
+                                <div class="toggle-label" onclick="toggleAnalysisMode()">
+                                    <span class="mode-icon">🔍</span>
+                                    <span>SWE</span>
+                                </div>
+                                <div class="toggle-switch" onclick="toggleAnalysisMode()" id="modeToggle">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div class="toggle-label" onclick="toggleAnalysisMode()">
+                                    <span class="mode-icon">💰</span>
+                                    <span>Financial</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1005,11 +1028,6 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                         <div class="github-diff">${this._formatGitDiff(commit.diff, commit.filename || 'Modified file', this._selectedText)}</div>
                     </div>
                 ` : '';
-                
-                // Debug logging
-                console.log(`[CodeScribe] Processing commit ${commit.hash}`);
-                console.log(`[CodeScribe] Diff length: ${commit.diff ? commit.diff.length : 0}`);
-                console.log(`[CodeScribe] Diff content preview:`, commit.diff ? commit.diff.substring(0, 200) + '...' : 'No diff');
                 
                 return `
                     <div class="timeline-item commit">
@@ -1295,13 +1313,7 @@ ${riskAssessment.recommendations.map(rec => `- ${rec}`).join('\n')}
     }
 
     private _formatGitDiff(diff: string, filename: string, selectedText: string = ''): string {
-        console.log(`[CodeScribe] _formatGitDiff called with:`);
-        console.log(`[CodeScribe] - filename: ${filename}`);
-        console.log(`[CodeScribe] - diff length: ${diff ? diff.length : 0}`);
-        console.log(`[CodeScribe] - diff content:`, diff ? diff.substring(0, 500) + '...' : 'No diff');
-        
         if (!diff || diff.trim().length === 0) {
-            console.log(`[CodeScribe] Returning 'No changes' - diff is empty`);
             return '<em>No changes</em>';
         }
         
@@ -1311,9 +1323,6 @@ ${riskAssessment.recommendations.map(rec => `- ${rec}`).join('\n')}
     }
     
     private _renderFullDiff(lines: string[], filename: string): string {
-        console.log(`[CodeScribe] _renderFullDiff called with ${lines.length} lines`);
-        console.log(`[CodeScribe] First 10 lines:`, lines.slice(0, 10));
-        
         let html = '';
         let lineNum = 0;
         let inHunk = false;

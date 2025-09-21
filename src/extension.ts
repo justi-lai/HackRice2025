@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { DependencyValidator } from './services/dependencyValidator';
 import { ApiKeyManager } from './services/apiKeyManager';
 import { CodeScribeWebviewProvider } from './webview/codescribeWebviewProvider';
+import { ChatWebviewProvider } from './webview/chatWebviewProvider';
 import { GitAnalysisEngine } from './services/gitAnalysisEngine';
 import { AiSummaryService } from './services/aiSummaryService';
 import { FinancialAnalysisService } from './services/financialAnalysisService';
@@ -17,16 +18,78 @@ export function activate(context: vscode.ExtensionContext) {
     const aiSummaryService = new AiSummaryService();
     const financialAnalysisService = new FinancialAnalysisService();
     const webviewProvider = new CodeScribeWebviewProvider(context.extensionUri);
+    const chatWebviewProvider = new ChatWebviewProvider(context.extensionUri, apiKeyManager, webviewProvider);
 
-    // Register webview provider
+    // Register webview providers
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(
             'codescribe.resultsView',
             webviewProvider
         )
     );
+    
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(
+            'codescribe.chatView',
+            chatWebviewProvider
+        )
+    );
 
     // Register commands
+    const showChatCommand = vscode.commands.registerCommand(
+        'codescribe.showChat',
+        async () => {
+            // Focus on the chat view to expand it
+            await vscode.commands.executeCommand('codescribe.chatView.focus');
+        }
+    );
+
+    const hideChatCommand = vscode.commands.registerCommand(
+        'codescribe.hideChat',
+        async () => {
+            // Focus on results view to collapse chat
+            await vscode.commands.executeCommand('codescribe.resultsView.focus');
+        }
+    );
+
+    const addToChatCommand = vscode.commands.registerCommand(
+        'codescribe.addToChat',
+        async () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                vscode.window.showErrorMessage('No active editor found.');
+                return;
+            }
+
+            const selection = editor.selection;
+            if (selection.isEmpty) {
+                vscode.window.showErrorMessage('Please select a block of code to add to chat.');
+                return;
+            }
+
+            const document = editor.document;
+            const selectedText = document.getText(selection);
+            const filePath = document.fileName;
+            const startLine = selection.start.line + 1;
+            const endLine = selection.end.line + 1;
+
+            // Add context to chat
+            chatWebviewProvider.addContext({
+                id: Date.now().toString(),
+                type: 'code',
+                content: selectedText,
+                filePath,
+                startLine,
+                endLine,
+                timestamp: new Date(),
+                title: `Code from ${filePath.split('/').pop()} (${startLine}-${endLine})`
+            });
+
+            // Show chat panel
+            await vscode.commands.executeCommand('codescribe.chatView.focus');
+        }
+    );
+
     const analyzeSelectionCommand = vscode.commands.registerCommand(
         'codescribe.analyzeSelection',
         async () => {
@@ -197,6 +260,9 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // Add to subscriptions
+    context.subscriptions.push(showChatCommand);
+    context.subscriptions.push(hideChatCommand);
+    context.subscriptions.push(addToChatCommand);
     context.subscriptions.push(analyzeSelectionCommand);
     context.subscriptions.push(configureApiKeyCommand);
     context.subscriptions.push(reanalyzeWithModeCommand);

@@ -35,12 +35,29 @@
       {
         "command": "codescribe.configureApiKey",
         "title": "CodeScribe: Configure API Key"
+      },
+      {
+        "command": "codescribe.showChat",
+        "title": "CodeScribe: Show Chat"
+      },
+      {
+        "command": "codescribe.hideChat",
+        "title": "CodeScribe: Hide Chat"
+      },
+      {
+        "command": "codescribe.addToChat",
+        "title": "CodeScribe: Add to Chat"
       }
     ],
     "menus": {
       "editor/context": [
         {
           "command": "codescribe.analyzeSelection",
+          "when": "editorHasSelection",
+          "group": "1_modification"
+        },
+        {
+          "command": "codescribe.addToChat",
           "when": "editorHasSelection",
           "group": "1_modification"
         }
@@ -53,6 +70,13 @@
           "id": "codescribe.resultsView",
           "name": "Results",
           "when": "true"
+        },
+        {
+          "type": "webview",
+          "id": "codescribe.chatView",
+          "name": "Chat",
+          "when": "true",
+          "visibility": "collapsed"
         }
       ]
     },
