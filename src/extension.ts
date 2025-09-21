@@ -4,6 +4,7 @@ import { ApiKeyManager } from './services/apiKeyManager';
 import { CodeScribeWebviewProvider } from './webview/codescribeWebviewProvider';
 import { GitAnalysisEngine } from './services/gitAnalysisEngine';
 import { AiSummaryService } from './services/aiSummaryService';
+import { FinancialAnalysisService } from './services/financialAnalysisService';
 import { ErrorHandler, UserFeedback } from './services/errorHandler';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -14,6 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
     const apiKeyManager = new ApiKeyManager(context);
     const gitAnalysisEngine = new GitAnalysisEngine();
     const aiSummaryService = new AiSummaryService();
+    const financialAnalysisService = new FinancialAnalysisService();
     const webviewProvider = new CodeScribeWebviewProvider(context.extensionUri);
 
     // Register webview provider
@@ -150,9 +152,54 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    const reanalyzeWithModeCommand = vscode.commands.registerCommand(
+        'codescribe.reanalyzeWithMode',
+        async (args: { results: any, financialMode: boolean }) => {
+            try {
+                const { results, financialMode } = args;
+                
+                // Get API key
+                const apiKey = await apiKeyManager.getApiKey();
+                
+                // Generate new summary based on mode
+                const summary = financialMode 
+                    ? await financialAnalysisService.generateFinancialSummary(
+                        results.analysisResult,
+                        results.selectedText,
+                        apiKey,
+                        results.filePath,
+                        parseInt(results.lineRange.split('-')[0]),
+                        parseInt(results.lineRange.split('-')[1])
+                    )
+                    : await aiSummaryService.generateSummary(
+                        results.analysisResult,
+                        results.selectedText,
+                        apiKey,
+                        results.filePath,
+                        parseInt(results.lineRange.split('-')[0]),
+                        parseInt(results.lineRange.split('-')[1])
+                    );
+
+                // Update webview with new summary
+                await webviewProvider.showResults({
+                    ...results,
+                    summary
+                });
+
+            } catch (error) {
+                console.error('Error re-analyzing with mode:', error);
+                await ErrorHandler.handleError(
+                    error instanceof Error ? error : new Error('Unknown error occurred'),
+                    'reanalyzeWithMode'
+                );
+            }
+        }
+    );
+
     // Add to subscriptions
     context.subscriptions.push(analyzeSelectionCommand);
     context.subscriptions.push(configureApiKeyCommand);
+    context.subscriptions.push(reanalyzeWithModeCommand);
 
     // Check dependencies on startup
     dependencyValidator.validateDependencies();

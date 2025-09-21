@@ -117,7 +117,7 @@ export class AiSummaryService {
         return context;
     }
 
-    private async generateGeminiSummary(context: string, apiKey: string, model: string): Promise<string> {
+    protected async generateGeminiSummary(context: string, apiKey: string, model: string): Promise<string> {
         const prompt = this.buildPrompt(context);
         
         try {
