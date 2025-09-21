@@ -600,10 +600,6 @@ export class ChatWebviewProvider implements vscode.WebviewViewProvider {
                                     <span class="codicon codicon-git-compare"></span>
                                     <span>Add Git Diff</span>
                                 </div>
-                                <div class="context-dropdown-item" onclick="addContext('workspace')">
-                                    <span class="codicon codicon-folder"></span>
-                                    <span>Add Workspace</span>
-                                </div>
                             </div>
                             <!-- Context chips container -->
                             <div class="context-chips-container" id="contextChipsContainer">

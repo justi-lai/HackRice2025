@@ -1,6 +1,21 @@
-# CodeScribe: The Code Archaeology Assistant
+# CodeScribe: The Code Archaeology Assis## 🚀 How It Works
 
-**CodeScribe** is a VS Code extension that transforms code investigation from a time-consuming manual process into a single, seamless action. By highlighting any block of code, developers can instantly receive a rich, AI-powered narrative history that explains the "why" behind the code using advanced evolution-based git analysis.
+### Code Archaeology Workflow
+1. **Select Code**: Highlight any block of code in a Git repository
+2. **Right-Click**: Choose "CodeScribe: Analyze Selection" from the context menu
+3. **Evolution Tracking**: CodeScribe uses `git blame` to identify which commits modified those exact lines
+4. **Smart Diff Extraction**: For each commit, extracts only the diff hunks that intersected with your selection
+5. **AI Analysis**: Feeds commit messages, surrounding code context, and PR information to Gemini AI
+6. **Confident Results**: Get definitive explanations of why the code exists and how it evolved
+
+### Financial Development Workflow
+1. **Switch to Finance Mode**: Toggle the Finance mode in the chat interface
+2. **Automatic Context**: CodeScribe detects financial libraries and patterns in your code
+3. **Specialized Analysis**: AI provides insights specific to trading, risk management, and financial modeling
+4. **Enhanced Chat**: Discuss financial algorithms with context-aware AI assistance
+5. **Multi-Context Support**: Add analysis results, code snippets, and git diffs to your financial development conversationsinancial Development Tool
+
+**CodeScribe** is a VS Code extension that transforms code investigation from a time-consuming manual process into a single, seamless action. By highlighting any block of code, developers can instantly receive a rich, AI-powered narrative history that explains the "why" behind the code using advanced evolution-based git analysis. Additionally, CodeScribe provides specialized financial application development capabilities with intelligent context awareness for trading algorithms, risk management systems, and financial data analysis.
 
 ## ✨ Key Features
 
@@ -9,10 +24,23 @@
 - **Smart File Movement Detection**: Automatically handles file renames and moves to provide complete history
 - **Targeted Diffs**: Shows only the git changes that actually affected your selected code, not generic commit diffs
 
-### 🤖 **AI-Powered Confident Analysis**
-- **Definitive Insights**: AI makes confident assertions based on commit messages, code comments, and surrounding context
-- **Rich Context Awareness**: Analyzes code with 3 lines of surrounding context for better understanding
+### 🤖 **Dual-Mode AI Assistant**
+- **Code Mode**: Provides definitive insights for general software development using commit messages, code comments, and surrounding context
+- **Finance Mode**: Specialized analysis for financial applications including trading algorithms, risk management, market analysis, and compliance considerations
+- **Context-Aware Responses**: Automatically adapts responses based on detected financial libraries, patterns, and terminology
 - **Google Gemini Integration**: Powered by Google's latest Gemini models for intelligent code analysis
+
+### 💰 **Financial Development Capabilities**
+- **Trading Algorithm Analysis**: Understands backtesting frameworks, strategy patterns, and market data structures
+- **Risk Management Intelligence**: Recognizes portfolio optimization, VaR calculations, and risk modeling patterns
+- **Market Data Processing**: Handles time series analysis, OHLCV data, and financial indicator calculations
+- **Compliance Awareness**: Identifies regulatory requirements and compliance patterns in financial code
+
+### 💬 **Intelligent Chat Interface**
+- **Contextual Conversations**: Chat with AI about your code with automatic context from CodeScribe analysis
+- **Multi-Context Support**: Add file contents, highlighted code, git diffs, and analysis results to chat conversations
+- **Mode-Specific Prompting**: Automatically adapts conversation style for financial vs. general development needs
+- **GitHub Copilot-Style UI**: Clean, minimal interface with example prompts and capability discovery
 
 ### 📊 **Interactive Timeline & GitHub Integration**
 - **Chronological History**: Browse through commits that actually modified your selected lines
@@ -79,7 +107,24 @@
 
 ## 🎯 Usage Examples
 
-### Understanding Complex Logic
+### Understanding Complex Trading Logic
+```python
+def calculate_portfolio_var(positions, correlation_matrix, confidence_level=0.95):
+    # Complex VaR calculation - why this specific approach?
+    portfolio_variance = np.dot(positions.T, np.dot(correlation_matrix, positions))
+    portfolio_std = np.sqrt(portfolio_variance)
+    z_score = norm.ppf(confidence_level)
+    return portfolio_std * z_score
+```
+
+**CodeScribe Analysis Result (Finance Mode):**
+> **WHY THIS CODE EXISTS:**
+> This Value-at-Risk implementation uses the parametric approach to meet regulatory risk reporting requirements. The correlation matrix method was chosen over Monte Carlo simulation for daily risk calculations due to performance requirements specified in issue #89.
+
+> **FINANCIAL CONTEXT:**
+> This VaR calculation follows Basel III guidelines for market risk assessment. The 95% confidence level is mandated by internal risk policies, and the correlation matrix approach ensures sub-second calculation times for the real-time risk dashboard.
+
+### Investigating Performance Optimizations
 ```javascript
 // You see this confusing function and wonder why it's so complex
 function debounceWithImmediate(func, wait, immediate) {
@@ -99,24 +144,28 @@ function debounceWithImmediate(func, wait, immediate) {
 }
 ```
 
-**CodeScribe Analysis Result:**
+**CodeScribe Analysis Result (Code Mode):**
 > **WHY THIS CODE EXISTS:**
 > This debounce implementation handles both trailing and leading edge execution patterns to solve performance issues with rapid user input events. The immediate flag was added after issue #156 revealed that search autocomplete needed instant feedback on the first keystroke.
 
 > **EVOLUTION & DECISIONS:**
 > Originally implemented as simple trailing debounce, but PR #234 added immediate execution support when users complained about delayed search results. The complex timeout logic ensures both patterns work correctly without interference.
 
-### Investigating Performance Optimizations
-```python
-@lru_cache(maxsize=128)
-def expensive_calculation(x, y, matrix_size=1000):
-    # Why is this cached? What's the performance impact?
-    return heavy_matrix_operation(x, y, matrix_size)
+### Financial Chat Interface Example
 ```
+User: "How can I optimize this backtesting strategy?"
+[Code context automatically added from current selection]
 
-**CodeScribe Analysis:**
-> **WHY THIS CODE EXISTS:**
-> This caching decorator was added to solve a critical performance bottleneck where the same calculations were being repeated hundreds of times per user session. Profiling data in PR #89 showed this function consumed 40% of CPU time before optimization.
+CodeScribe (Finance Mode): "Based on your Zipline strategy code, I can see several optimization opportunities:
+
+1. **Vectorization**: Your current position sizing logic uses loops. Consider using pandas vectorized operations for the moving average calculations.
+
+2. **Commission Model**: You're using the default commission model. For more accurate backtesting, implement a tiered commission structure based on your actual broker fees.
+
+3. **Slippage Modeling**: Consider adding realistic slippage models, especially for the momentum-based entries you're using.
+
+Would you like me to show specific code improvements for any of these areas?"
+```
 
 ## 🎨 What Makes CodeScribe Different
 
@@ -126,6 +175,8 @@ def expensive_calculation(x, y, matrix_size=1000):
 - Piece together context from multiple sources
 - Guess at the reasoning behind changes
 - Spend 15-30 minutes per investigation
+- No specialized financial domain knowledge
+- Separate tools for code analysis and development chat
 
 ### CodeScribe Approach ✅
 - Select code → right-click → instant analysis
@@ -133,6 +184,9 @@ def expensive_calculation(x, y, matrix_size=1000):
 - AI confidently explains purpose based on rich context
 - Complete timeline with GitHub integration
 - Get definitive answers in seconds
+- **Dual-mode intelligence**: General development + financial expertise
+- **Integrated chat interface**: Discuss code with context-aware AI
+- **Automatic context addition**: Seamlessly add analysis, code, and git data to conversations
 
 ## 🔧 Advanced Features
 
@@ -149,6 +203,19 @@ The AI analyzes:
 - **PR descriptions** detailing problems and solutions
 - **Code comments** providing developer insights
 - **Related issues** linked to PRs for full background
+
+### Financial Domain Intelligence
+CodeScribe recognizes and provides specialized analysis for:
+- **Trading Libraries**: Zipline, Backtrader, QuantLib, pandas-ta
+- **Market Data Patterns**: OHLCV structures, time series analysis, technical indicators
+- **Risk Management**: VaR calculations, portfolio optimization, correlation analysis
+- **Financial Compliance**: Regulatory requirements, audit trails, risk reporting
+
+### Intelligent Chat System
+- **Multi-Context Support**: Add files, code selections, git diffs, and analysis results
+- **Mode-Aware Responses**: Automatically adapts based on finance vs. general development context
+- **GitHub Copilot-Style Interface**: Clean, minimal design with capability discovery
+- **Context Management**: Easy addition and removal of conversation context
 
 ### Intelligent Diff Filtering
 Instead of showing entire commit diffs, CodeScribe:
@@ -175,11 +242,9 @@ Instead of showing entire commit diffs, CodeScribe:
 ### Available Models
 
 - **`codescribe.geminiModel`**: 
-  - `gemini-2.5-pro` - Latest production model with highest quality
-  - `gemini-2.5-flash` - Latest fast model with excellent performance
-  - `gemini-2.0-flash-exp` - Experimental model with enhanced capabilities
-  - `gemini-1.5-pro` (recommended) - Stable, well-tested model with great balance
-  - `gemini-1.5-flash` - Faster responses with good quality
+  - `gemini-2.0-flash-exp` - Latest experimental model with enhanced capabilities
+  - `gemini-1.5-pro` (recommended) - Stable, well-tested model with great balance for both code and financial analysis
+  - `gemini-1.5-flash` - Faster responses with good quality for both domains
   - `gemini-1.5-flash-8b` - Lightweight model for quick analysis
   - `gemini-pro` - Legacy model (not recommended)
 
@@ -209,6 +274,16 @@ Instead of showing entire commit diffs, CodeScribe:
 - Ensure local repository is up-to-date with `git pull`
 - Selected code might not have substantial git history
 
+**"Chat context not working"**
+- Ensure you're in the correct mode (Code/Finance) for your content
+- Try manually adding context using the + button in the chat interface
+- Check that analysis results are available before adding them to chat
+
+**"Finance mode not recognizing financial code"**
+- Ensure your code uses recognizable financial libraries (pandas, numpy, zipline, etc.)
+- Try manually switching to Finance mode using the toggle buttons
+- Financial detection works best with trading algorithms and market data processing code
+
 ### Debug Information
 - Open VS Code Developer Console (F12) for detailed logs
 - Look for `[CodeScribe]` prefixed messages
@@ -232,24 +307,11 @@ npm run compile
 # Open in VS Code and press F5 to debug
 ```
 
-## 📄 License
-
-MIT License - see LICENSE file for details
-
 ## 🙏 Acknowledgments
 
 - **HackRice 2025** - Where this project was born
 - **VS Code Extension API** - Excellent development platform  
-- **Google Gemini AI** - Powering intelligent code analysis
+- **Google Gemini AI** - Powering intelligent code and financial analysis
 - **GitHub CLI** - Seamless GitHub integration
 - **Git** - The foundation that makes code archaeology possible
-
----
-
-## 🏺 Happy Code Archaeology!
-
-*"Every line of code has a story. CodeScribe helps you discover it."*
-
----
-
-**Built with ❤️ for developers who want to understand their code, not just read it.**
+- **Financial Development Community** - For inspiring the dual-mode capabilities

@@ -105,12 +105,12 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                     font-weight: var(--vscode-font-weight);
                     color: var(--vscode-foreground);
                     background-color: var(--vscode-editor-background);
-                    padding: 40px 20px;
+                    padding: 20px 16px;
                     margin: 0;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    min-height: 100vh;
+                    min-height: calc(100vh - 40px);
                 }
                 .welcome {
                     text-align: center;
@@ -193,7 +193,7 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                     font-weight: var(--vscode-font-weight);
                     color: var(--vscode-foreground);
                     background-color: var(--vscode-editor-background);
-                    padding: 24px;
+                    padding: 12px;
                     margin: 0;
                     line-height: 1.6;
                     word-wrap: break-word;
@@ -215,8 +215,8 @@ export class CodeScribeWebviewProvider implements vscode.WebviewViewProvider {
                 
                 .header {
                     border-bottom: 1px solid var(--vscode-input-border);
-                    padding-bottom: 20px;
-                    margin-bottom: 32px;
+                    padding-bottom: 16px;
+                    margin-bottom: 20px;
                     word-wrap: break-word;
                 }
                 
